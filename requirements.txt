@@ -1,0 +1,14 @@
+#these ranges are more stable versions that as they have the lates API hanges and bug fixes
+Django>=5.2,<5.3 #think of django as a complete house that has all these features needed for this projet
+djangorestframework>=3.15,<4.0 #helps me in building api's easier
+django-filter>=24.0,<26.0 #This package makes filtering APIs incredibly easy.
+psycopg[binary]>=3.2,<4.0 #translator that helps python communnicate to postgres It installs a precompiled version.
+dj-database-url>=2.0,<4.0 #converts DATABASE_URL into django settings. Useful for deployment
+python-dotenv>=1.0,<2.0 #loads data from .env protects secrets
+gunicorn>=22.0,<24.0 #Gunicorn runs Django in production.
+whitenoise>=6.0,<7.0 #serves css,javascript,images, fonts without needing another web server.
+pytest>=8.0,<9.0 #runs tests and it is preferred as its cleaner more powerful and easier to extend
+pytest-django>=4.8,<5.0 #this teaches pytest about django since it knows nothing about it. Without it pytest can't understand django
+pytest-cov>=5.0,<7.0 #measures code coverage
+factory-boy>=3.3,<4.0 #creates fake tests and it creates valid test objects automatically.This keeps tests short and avoids duplication (the DRY principle).
+ruff>=0.8,<1.0 #Running Ruff regularly helps keep the codebase clean and consistent.By Ruff is a very fast linter and code formatter.
