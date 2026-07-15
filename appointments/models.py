@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError #allows your model to reject invalid data with a meaningful message
 from django.db import models #imports Django’s database modeling tools.
 from django.db.models import Q #Q object represents a database condition.Q is used inside database constraints.
+from typing import cast
 
 
 class Doctor(models.Model):
@@ -108,12 +109,21 @@ Human-readable label:Monday
                     }
                 )
 
-    def __str__(self):
+    
+    def __str__(self) -> str:
+        """
+    Return a readable representation of the doctor's working hours.
+    """
+        weekday = cast(
+        DoctorWorkingHour.Weekday,
+        self.Weekday(self.weekday),
+    )
+
         return (
             f"{self.doctor} - "
-            f"{self.get_weekday_display()} "
+            f"{weekday.label} "
             f"{self.start_time} to {self.end_time}"
-        )
+    )
 
 
 class Appointment(models.Model):

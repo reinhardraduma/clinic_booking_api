@@ -1,0 +1,20 @@
+[run]
+source = appointments
+branch = True
+
+omit =
+    appointments/migrations/*
+    appointments/tests/*
+    appointments/management/*
+    appointments/apps.py
+    appointments/admin.py
+
+[report]
+show_missing = True
+skip_covered = False
+fail_under = 80
+
+exclude_lines =
+    pragma: no cover
+    if TYPE_CHECKING:
+    raise NotImplementedError
