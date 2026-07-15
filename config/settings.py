@@ -8,7 +8,6 @@ from pathlib import Path
 import dj_database_url
 from django.core.management.utils import get_random_secret_key
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -48,11 +47,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # Third-party applications
     "rest_framework",
     "django_filters",
-
     # Local applications
     "appointments",
 ]
@@ -75,23 +72,14 @@ ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": (
-            "django.template.backends.django.DjangoTemplates"
-        ),
+        "BACKEND": ("django.template.backends.django.DjangoTemplates"),
         "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                (
-                    "django.template.context_processors.request"
-                ),
-                (
-                    "django.contrib.auth.context_processors.auth"
-                ),
-                (
-                    "django.contrib.messages.context_processors."
-                    "messages"
-                ),
+                ("django.template.context_processors.request"),
+                ("django.contrib.auth.context_processors.auth"),
+                ("django.contrib.messages.context_processors.messages"),
             ],
         },
     },
@@ -114,28 +102,16 @@ DATABASES = {
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "UserAttributeSimilarityValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation.UserAttributeSimilarityValidator"),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "MinimumLengthValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation.MinimumLengthValidator"),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "CommonPasswordValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation.CommonPasswordValidator"),
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "NumericPasswordValidator"
-        ),
+        "NAME": ("django.contrib.auth.password_validation.NumericPasswordValidator"),
     },
 ]
 
@@ -157,15 +133,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
     "default": {
-        "BACKEND": (
-            "django.core.files.storage.FileSystemStorage"
-        ),
+        "BACKEND": ("django.core.files.storage.FileSystemStorage"),
     },
     "staticfiles": {
-        "BACKEND": (
-            "whitenoise.storage."
-            "CompressedManifestStaticFilesStorage"
-        ),
+        "BACKEND": ("whitenoise.storage.CompressedManifestStaticFilesStorage"),
     },
 }
 
@@ -182,10 +153,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ],
     "DEFAULT_FILTER_BACKENDS": [
-        (
-            "django_filters.rest_framework."
-            "DjangoFilterBackend"
-        ),
+        ("django_filters.rest_framework.DjangoFilterBackend"),
     ],
 }
 
