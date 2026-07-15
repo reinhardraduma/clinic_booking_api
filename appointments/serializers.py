@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from appointments.models import Appointment, Doctor, Patient
 
 
@@ -18,6 +19,7 @@ class AvailabilitySlotSerializer(serializers.Serializer):
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
 
+
 class AppointmentBookingSerializer(serializers.Serializer):
     """
     Validate data required to book an appointment.
@@ -36,7 +38,19 @@ class AppointmentBookingSerializer(serializers.Serializer):
     start_time = serializers.DateTimeField()
 
 
+class AppointmentRescheduleSerializer(serializers.Serializer):
+    """
+    Validate appointment rescheduling input.
+    """
+
+    start_time = serializers.DateTimeField()
+
+
 class DoctorSummarySerializer(serializers.ModelSerializer):
+    """
+    Return a simplified doctor representation.
+    """
+
     class Meta:
         model = Doctor
         fields = (
@@ -47,6 +61,10 @@ class DoctorSummarySerializer(serializers.ModelSerializer):
 
 
 class PatientSummarySerializer(serializers.ModelSerializer):
+    """
+    Return a simplified patient representation.
+    """
+
     class Meta:
         model = Patient
         fields = (
@@ -56,6 +74,10 @@ class PatientSummarySerializer(serializers.ModelSerializer):
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    """
+    Return complete appointment details.
+    """
+
     doctor = DoctorSummarySerializer(read_only=True)
     patient = PatientSummarySerializer(read_only=True)
     end_time = serializers.DateTimeField(read_only=True)

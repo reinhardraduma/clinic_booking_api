@@ -1,17 +1,28 @@
 from datetime import datetime
 
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
+from django.utils import timezone
 
 from appointments.models import Appointment, Doctor, Patient
 from appointments.validators import validate_appointment_slot
-
-from django.utils import timezone
 
 
 class SlotUnavailableError(Exception):
     """
     Raised when a requested appointment slot is no longer available.
+    """
+
+
+class AppointmentAlreadyCancelledError(Exception):
+    """
+    Raised when attempting to cancel an appointment
+    that is already cancelled.
+    """
+
+
+class CancelledAppointmentError(Exception):
+    """
+    Raised when attempting to reschedule a cancelled appointment.
     """
 
 
@@ -44,13 +55,6 @@ def book_appointment(
         ) from exc
 
     return appointment
-
-
-class AppointmentAlreadyCancelledError(Exception):
-    """
-    Raised when attempting to cancel an appointment
-    that is already cancelled.
-    """
 
 
 @transaction.atomic
@@ -89,3 +93,53 @@ def cancel_appointment(
     )
 
     return locked_appointment
+
+
+def reschedule_appointment(
+    *,
+    appointment: Appointment,
+    new_start_time: datetime,
+) -> Appointment:
+    """
+    Move an active appointment to a new slot atomically.
+
+    If validation or saving fails, the original appointment time
+    remains unchanged.
+    """
+
+    try:
+        with transaction.atomic():
+            locked_appointment = (
+                Appointment.objects.select_for_update().get(
+                    pk=appointment.pk,
+                )
+            )
+
+            if (
+                locked_appointment.status
+                == Appointment.Status.CANCELLED
+            ):
+                raise CancelledAppointmentError(
+                    "A cancelled appointment cannot be rescheduled."
+                )
+
+            validate_appointment_slot(
+                doctor=locked_appointment.doctor,
+                start_time=new_start_time,
+                exclude_appointment_id=locked_appointment.pk,
+            )
+
+            locked_appointment.start_time = new_start_time
+            locked_appointment.save(
+                update_fields=[
+                    "start_time",
+                    "updated_at",
+                ]
+            )
+
+            return locked_appointment
+
+    except IntegrityError as exc:
+        raise SlotUnavailableError(
+            "The selected appointment slot is no longer available."
+        ) from exc

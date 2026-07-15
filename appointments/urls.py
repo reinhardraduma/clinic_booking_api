@@ -3,6 +3,7 @@ from django.urls import path
 from appointments.views import (
     appointment_create,
     appointment_cancel,
+    appointment_reschedule,
     doctor_availability,
     health_check,
 )
@@ -26,6 +27,11 @@ urlpatterns = [
     "appointments/<int:appointment_id>/cancel/",
     appointment_cancel,
     name="appointment-cancel",
+    ),
+    path(
+    "appointments/<int:appointment_id>/reschedule/",
+    appointment_reschedule,
+    name="appointment-reschedule",
     ),
     path(
         "doctors/<int:doctor_id>/availability/",
