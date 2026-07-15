@@ -13,6 +13,19 @@ from appointments.serializers import (
     AvailabilitySlotSerializer,
 )
 
+from django.core.exceptions import ValidationError
+
+from appointments.serializers import (
+    AppointmentBookingSerializer,
+    AppointmentSerializer,
+    AvailabilityQuerySerializer,
+    AvailabilitySlotSerializer,
+)
+from appointments.services import (
+    SlotUnavailableError,
+    book_appointment,
+)
+from appointments.validators import SLOT_DURATION_MINUTES
 
 @api_view(["GET"])
 def health_check(request: Request) -> Response:
@@ -82,4 +95,60 @@ def doctor_availability(
             "available_slots": slot_serializer.data,
         },
         status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["POST"])
+def appointment_create(request: Request) -> Response:
+    """
+    Book a new appointment.
+    """
+
+    input_serializer = AppointmentBookingSerializer(
+        data=request.data,
+    )
+
+    input_serializer.is_valid(raise_exception=True)
+
+    validated_data = cast(
+        dict[str, Any],
+        input_serializer.validated_data,
+    )
+
+    try:
+        appointment = book_appointment(
+            doctor=validated_data["doctor"],
+            patient=validated_data["patient"],
+            start_time=validated_data["start_time"],
+        )
+    except ValidationError as exc:
+        message = (
+            exc.messages[0]
+            if exc.messages
+            else "The appointment could not be booked."
+        )
+
+        return Response(
+            {
+                "code": "invalid_appointment",
+                "detail": message,
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    except SlotUnavailableError as exc:
+        return Response(
+            {
+                "code": "slot_unavailable",
+                "detail": str(exc),
+            },
+            status=status.HTTP_409_CONFLICT,
+        )
+
+    output_serializer = AppointmentSerializer(
+        appointment,
+    )
+
+    return Response(
+        output_serializer.data,
+        status=status.HTTP_201_CREATED,
     )
