@@ -7,8 +7,12 @@ from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from appointments.models import Appointment, Doctor
-from appointments.selectors import get_doctor_availability
+from appointments.models import Appointment, Doctor, Patient
+from appointments.selectors import (
+    get_doctor_availability,
+    get_patient_upcoming_appointments,
+)
+
 from appointments.serializers import (
     AppointmentBookingSerializer,
     AppointmentCancellationSerializer,
@@ -283,5 +287,44 @@ def appointment_reschedule(
 
     return Response(
         output_serializer.data,
+        status=status.HTTP_200_OK,
+    )
+
+
+@api_view(["GET"])
+def patient_upcoming_appointments(
+    _request: Request,
+    patient_id: int,
+) -> Response:
+    """
+    Return a patient's upcoming booked appointments,
+    sorted by appointment date.
+    """
+
+    patient = cast(
+        Patient,
+        get_object_or_404(
+            Patient,
+            pk=patient_id,
+        ),
+    )
+
+    appointments = get_patient_upcoming_appointments(
+        patient=patient,
+    )
+
+    serializer = AppointmentSerializer(
+        appointments,
+        many=True,
+    )
+
+    return Response(
+        {
+            "patient": {
+                "id": patient.pk,
+                "full_name": patient.full_name,
+            },
+            "appointments": serializer.data,
+        },
         status=status.HTTP_200_OK,
     )

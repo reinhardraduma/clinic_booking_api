@@ -6,6 +6,7 @@ from appointments.views import (
     appointment_reschedule,
     doctor_availability,
     health_check,
+    patient_upcoming_appointments,
 )
 
 
@@ -37,5 +38,10 @@ urlpatterns = [
         "doctors/<int:doctor_id>/availability/",
         doctor_availability,
         name="doctor-availability",
+    ),
+    path(
+    "patients/<int:patient_id>/appointments/",
+    patient_upcoming_appointments,
+    name="patient-upcoming-appointments",
     ),
 ]

@@ -1,8 +1,7 @@
 from datetime import date, datetime, time, timedelta
-
 from django.utils import timezone
-
-from appointments.models import Appointment, Doctor, DoctorWorkingHour
+from django.db.models import QuerySet
+from appointments.models import Appointment, Doctor, DoctorWorkingHour, Patient
 from appointments.validators import (
     MINIMUM_BOOKING_NOTICE,
     SLOT_DURATION_MINUTES,
@@ -147,3 +146,26 @@ def get_doctor_availability(
         )
 
     return available_slots
+
+
+def get_patient_upcoming_appointments(
+    *,
+    patient: Patient,
+) -> QuerySet[Appointment]:
+    """
+    Return a patient's upcoming booked appointments,
+    ordered from earliest to latest.
+    """
+
+    return (
+        Appointment.objects.filter(
+            patient=patient,
+            status=Appointment.Status.BOOKED,
+            start_time__gte=timezone.now(),
+        )
+        .select_related(
+            "doctor",
+            "patient",
+        )
+        .order_by("start_time")
+    )
