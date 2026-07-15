@@ -50,9 +50,7 @@ def book_appointment(
             status=Appointment.Status.BOOKED,
         )
     except IntegrityError as exc:
-        raise SlotUnavailableError(
-            "The selected appointment slot is no longer available."
-        ) from exc
+        raise SlotUnavailableError("The selected appointment slot is no longer available.") from exc
 
     return appointment
 
@@ -75,9 +73,7 @@ def cancel_appointment(
     )
 
     if locked_appointment.status == Appointment.Status.CANCELLED:
-        raise AppointmentAlreadyCancelledError(
-            "This appointment has already been cancelled."
-        )
+        raise AppointmentAlreadyCancelledError("This appointment has already been cancelled.")
 
     locked_appointment.status = Appointment.Status.CANCELLED
     locked_appointment.cancellation_reason = reason
@@ -109,19 +105,12 @@ def reschedule_appointment(
 
     try:
         with transaction.atomic():
-            locked_appointment = (
-                Appointment.objects.select_for_update().get(
-                    pk=appointment.pk,
-                )
+            locked_appointment = Appointment.objects.select_for_update().get(
+                pk=appointment.pk,
             )
 
-            if (
-                locked_appointment.status
-                == Appointment.Status.CANCELLED
-            ):
-                raise CancelledAppointmentError(
-                    "A cancelled appointment cannot be rescheduled."
-                )
+            if locked_appointment.status == Appointment.Status.CANCELLED:
+                raise CancelledAppointmentError("A cancelled appointment cannot be rescheduled.")
 
             validate_appointment_slot(
                 doctor=locked_appointment.doctor,
@@ -140,6 +129,4 @@ def reschedule_appointment(
             return locked_appointment
 
     except IntegrityError as exc:
-        raise SlotUnavailableError(
-            "The selected appointment slot is no longer available."
-        ) from exc
+        raise SlotUnavailableError("The selected appointment slot is no longer available.") from exc

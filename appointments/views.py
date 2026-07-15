@@ -12,7 +12,6 @@ from appointments.selectors import (
     get_doctor_availability,
     get_patient_upcoming_appointments,
 )
-
 from appointments.serializers import (
     AppointmentBookingSerializer,
     AppointmentCancellationSerializer,
@@ -128,11 +127,7 @@ def appointment_create(request: Request) -> Response:
         )
 
     except ValidationError as exc:
-        message = (
-            exc.messages[0]
-            if exc.messages
-            else "The appointment could not be booked."
-        )
+        message = exc.messages[0] if exc.messages else "The appointment could not be booked."
 
         return Response(
             {
@@ -258,11 +253,7 @@ def appointment_reschedule(
         )
 
     except ValidationError as exc:
-        message = (
-            exc.messages[0]
-            if exc.messages
-            else "The appointment could not be rescheduled."
-        )
+        message = exc.messages[0] if exc.messages else "The appointment could not be rescheduled."
 
         return Response(
             {

@@ -5,59 +5,75 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('appointments', '0001_initial'),
+        ("appointments", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='doctor',
-            options={'ordering': ['full_name']},
+            name="doctor",
+            options={"ordering": ["full_name"]},
         ),
         migrations.AlterModelOptions(
-            name='doctorworkinghour',
-            options={'ordering': ['doctor', 'weekday', 'start_time']},
+            name="doctorworkinghour",
+            options={"ordering": ["doctor", "weekday", "start_time"]},
         ),
         migrations.AlterModelOptions(
-            name='patient',
-            options={'ordering': ['full_name']},
+            name="patient",
+            options={"ordering": ["full_name"]},
         ),
         migrations.AddField(
-            model_name='appointment',
-            name='cancelled_at',
+            model_name="appointment",
+            name="cancelled_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='doctorworkinghour',
-            name='is_active',
+            model_name="doctorworkinghour",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
-            model_name='appointment',
-            name='cancellation_reason',
-            field=models.TextField(blank=True, default=''),
+            model_name="appointment",
+            name="cancellation_reason",
+            field=models.TextField(blank=True, default=""),
         ),
         migrations.AlterField(
-            model_name='appointment',
-            name='doctor',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='appointments', to='appointments.doctor'),
+            model_name="appointment",
+            name="doctor",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="appointments",
+                to="appointments.doctor",
+            ),
         ),
         migrations.AlterField(
-            model_name='appointment',
-            name='patient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='appointments', to='appointments.patient'),
+            model_name="appointment",
+            name="patient",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="appointments",
+                to="appointments.patient",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='appointment',
-            constraint=models.UniqueConstraint(condition=models.Q(('status', 'BOOKED')), fields=('doctor', 'start_time'), name='unique_active_doctor_appointment_slot'),
+            model_name="appointment",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("status", "BOOKED")),
+                fields=("doctor", "start_time"),
+                name="unique_active_doctor_appointment_slot",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='doctorworkinghour',
-            constraint=models.UniqueConstraint(fields=('doctor', 'weekday'), name='unique_doctor_working_day'),
+            model_name="doctorworkinghour",
+            constraint=models.UniqueConstraint(
+                fields=("doctor", "weekday"), name="unique_doctor_working_day"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='doctorworkinghour',
-            constraint=models.CheckConstraint(condition=models.Q(('end_time__gt', models.F('start_time'))), name='working_hour_end_after_start'),
+            model_name="doctorworkinghour",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("end_time__gt", models.F("start_time"))),
+                name="working_hour_end_after_start",
+            ),
         ),
     ]

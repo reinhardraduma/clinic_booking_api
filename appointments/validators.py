@@ -5,7 +5,6 @@ from django.utils import timezone
 
 from appointments.models import Appointment, DoctorWorkingHour
 
-
 SLOT_DURATION_MINUTES = 30
 MINIMUM_BOOKING_NOTICE = timedelta(hours=1)
 
@@ -16,31 +15,21 @@ def validate_slot_start_time(start_time):
     """
 
     if timezone.is_naive(start_time):
-        raise ValidationError(
-            "Appointment start time must include timezone information."
-        )
+        raise ValidationError("Appointment start time must include timezone information.")
 
     now = timezone.now()
 
     if start_time <= now:
-        raise ValidationError(
-            "Appointments cannot be booked in the past."
-        )
+        raise ValidationError("Appointments cannot be booked in the past.")
 
     if start_time < now + MINIMUM_BOOKING_NOTICE:
-        raise ValidationError(
-            "Appointments must be booked at least one hour in advance."
-        )
+        raise ValidationError("Appointments must be booked at least one hour in advance.")
 
     if start_time.second != 0 or start_time.microsecond != 0:
-        raise ValidationError(
-            "Appointment time must not include seconds."
-        )
+        raise ValidationError("Appointment time must not include seconds.")
 
     if start_time.minute not in (0, 30):
-        raise ValidationError(
-            "Appointments must begin on a 30-minute slot."
-        )
+        raise ValidationError("Appointments must begin on a 30-minute slot.")
 
 
 def validate_doctor_working_hours(doctor, start_time):
@@ -59,26 +48,18 @@ def validate_doctor_working_hours(doctor, start_time):
             is_active=True,
         )
     except DoctorWorkingHour.DoesNotExist as exc:
-        raise ValidationError(
-            "The doctor does not work on the selected day."
-        ) from exc
+        raise ValidationError("The doctor does not work on the selected day.") from exc
 
-    appointment_end_time = (
-        local_start_time + timedelta(minutes=SLOT_DURATION_MINUTES)
-    )
+    appointment_end_time = local_start_time + timedelta(minutes=SLOT_DURATION_MINUTES)
 
     selected_start = local_start_time.time()
     selected_end = appointment_end_time.time()
 
     if selected_start < working_hour.start_time:
-        raise ValidationError(
-            "The selected slot begins before the doctor's working hours."
-        )
+        raise ValidationError("The selected slot begins before the doctor's working hours.")
 
     if selected_end > working_hour.end_time:
-        raise ValidationError(
-            "The selected slot ends after the doctor's working hours."
-        )
+        raise ValidationError("The selected slot ends after the doctor's working hours.")
 
 
 def validate_slot_availability(
@@ -102,9 +83,7 @@ def validate_slot_availability(
         )
 
     if appointments.exists():
-        raise ValidationError(
-            "The selected appointment slot is already booked."
-        )
+        raise ValidationError("The selected appointment slot is already booked.")
 
 
 def validate_appointment_slot(
@@ -117,9 +96,7 @@ def validate_appointment_slot(
     """
 
     if not doctor.is_active:
-        raise ValidationError(
-            "Appointments cannot be booked with an inactive doctor."
-        )
+        raise ValidationError("Appointments cannot be booked with an inactive doctor.")
 
     validate_slot_start_time(start_time)
 

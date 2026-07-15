@@ -8,20 +8,20 @@ from appointments.models import (
 )
 
 
-@admin.register(Doctor) #is equivalent to admin.site.register(Doctor, DoctorAdmin)
+@admin.register(Doctor)  # is equivalent to admin.site.register(Doctor, DoctorAdmin)
 class DoctorAdmin(admin.ModelAdmin):
-    #This controls the columns shown on the admin list page.
+    # This controls the columns shown on the admin list page.
     list_display = (
         "id",
         "full_name",
         "email",
         "specialization",
         "is_active",
-    )#This adds filters on the right side of the admin.
+    )  # This adds filters on the right side of the admin.
     list_filter = (
         "is_active",
         "specialization",
-    )#This adds a search box.
+    )  # This adds a search box.
     search_fields = (
         "full_name",
         "email",
@@ -61,7 +61,7 @@ class DoctorWorkingHourAdmin(admin.ModelAdmin):
         "is_active",
     )
     search_fields = (
-        "doctor__full_name", #The double underscore here: means Follow the foreign key relationship to Doctor, then search the full_name field.
+        "doctor__full_name",  # The double underscore here: means Follow the foreign key relationship to Doctor, then search the full_name field.
         "doctor__email",
     )
     ordering = (

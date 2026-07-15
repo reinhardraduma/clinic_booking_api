@@ -1,0 +1,21 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 160
+exclude = [
+    ".venv",
+    "migrations",
+    "htmlcov",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "UP",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

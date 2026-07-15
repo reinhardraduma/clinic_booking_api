@@ -112,9 +112,7 @@ class TestAppointmentReschedulingAPI:
         data = get_response_data(response)
 
         assert response.status_code == status.HTTP_200_OK
-        assert data["start_time"] == (
-            self.new_start_time.isoformat().replace("+00:00", "Z")
-        )
+        assert data["start_time"] == (self.new_start_time.isoformat().replace("+00:00", "Z"))
 
         self.appointment.refresh_from_db()
 
@@ -200,10 +198,7 @@ class TestAppointmentReschedulingAPI:
 
         self.appointment.refresh_from_db()
 
-        assert (
-            self.appointment.start_time
-            == self.original_start_time
-        )
+        assert self.appointment.start_time == self.original_start_time
 
     @patch("appointments.validators.timezone.now")
     def test_rejects_rescheduling_cancelled_appointment(

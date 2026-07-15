@@ -59,9 +59,7 @@ class TestDoctorAvailabilityAPI:
         Return four 30-minute slots between 8:00 AM
         and 10:00 AM.
         """
-        mocked_now.return_value = timezone.make_aware(
-            timezone.datetime(2026, 7, 20, 6, 0)
-        )
+        mocked_now.return_value = timezone.make_aware(timezone.datetime(2026, 7, 20, 6, 0))
 
         response = cast(
             Response,
@@ -161,9 +159,7 @@ class TestDoctorAvailabilityAPI:
         Return an empty list when the doctor does not work
         on the requested weekday.
         """
-        mocked_now.return_value = timezone.make_aware(
-            timezone.datetime(2026, 7, 20, 6, 0)
-        )
+        mocked_now.return_value = timezone.make_aware(timezone.datetime(2026, 7, 20, 6, 0))
 
         response = cast(
             Response,

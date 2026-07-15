@@ -253,9 +253,7 @@ class TestAppointmentViews:
         """
         Return 400 when appointment validation fails.
         """
-        mocked_book_appointment.side_effect = ValidationError(
-            "The requested appointment is invalid."
-        )
+        mocked_book_appointment.side_effect = ValidationError("The requested appointment is invalid.")
 
         response = cast(
             Response,
@@ -274,9 +272,7 @@ class TestAppointmentViews:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert data["code"] == "invalid_appointment"
-        assert data["detail"] == (
-            "The requested appointment is invalid."
-        )
+        assert data["detail"] == ("The requested appointment is invalid.")
 
     @patch("appointments.views.book_appointment")
     def test_appointment_create_handles_slot_unavailable(
@@ -286,9 +282,7 @@ class TestAppointmentViews:
         """
         Return 409 when the selected slot becomes unavailable.
         """
-        mocked_book_appointment.side_effect = SlotUnavailableError(
-            "The selected appointment slot is no longer available."
-        )
+        mocked_book_appointment.side_effect = SlotUnavailableError("The selected appointment slot is no longer available.")
 
         response = cast(
             Response,
@@ -308,10 +302,7 @@ class TestAppointmentViews:
         assert response.status_code == status.HTTP_409_CONFLICT
         assert data == {
             "code": "slot_unavailable",
-            "detail": (
-                "The selected appointment slot "
-                "is no longer available."
-            ),
+            "detail": ("The selected appointment slot is no longer available."),
         }
 
     def test_appointment_create_rejects_missing_fields(self) -> None:
@@ -364,9 +355,7 @@ class TestAppointmentViews:
         assert response.status_code == status.HTTP_200_OK
         assert data["id"] == self.appointment.pk
         assert data["status"] == Appointment.Status.CANCELLED
-        assert data["cancellation_reason"] == (
-            "Patient changed plans."
-        )
+        assert data["cancellation_reason"] == ("Patient changed plans.")
 
     @patch("appointments.views.cancel_appointment")
     def test_appointment_cancel_handles_already_cancelled(
@@ -376,11 +365,7 @@ class TestAppointmentViews:
         """
         Return 409 when the appointment was already cancelled.
         """
-        mocked_cancel_appointment.side_effect = (
-            AppointmentAlreadyCancelledError(
-                "This appointment has already been cancelled."
-            )
-        )
+        mocked_cancel_appointment.side_effect = AppointmentAlreadyCancelledError("This appointment has already been cancelled.")
 
         response = cast(
             Response,
@@ -398,9 +383,7 @@ class TestAppointmentViews:
         assert response.status_code == status.HTTP_409_CONFLICT
         assert data == {
             "code": "appointment_already_cancelled",
-            "detail": (
-                "This appointment has already been cancelled."
-            ),
+            "detail": ("This appointment has already been cancelled."),
         }
 
     def test_appointment_cancel_returns_404_for_unknown_appointment(
@@ -467,11 +450,7 @@ class TestAppointmentViews:
         """
         Return 409 when attempting to reschedule a cancelled appointment.
         """
-        mocked_reschedule_appointment.side_effect = (
-            CancelledAppointmentError(
-                "A cancelled appointment cannot be rescheduled."
-            )
-        )
+        mocked_reschedule_appointment.side_effect = CancelledAppointmentError("A cancelled appointment cannot be rescheduled.")
 
         response = cast(
             Response,
@@ -489,9 +468,7 @@ class TestAppointmentViews:
         assert response.status_code == status.HTTP_409_CONFLICT
         assert data == {
             "code": "cancelled_appointment",
-            "detail": (
-                "A cancelled appointment cannot be rescheduled."
-            ),
+            "detail": ("A cancelled appointment cannot be rescheduled."),
         }
 
     @patch("appointments.views.reschedule_appointment")
@@ -502,9 +479,7 @@ class TestAppointmentViews:
         """
         Return 400 when the requested new time is invalid.
         """
-        mocked_reschedule_appointment.side_effect = ValidationError(
-            "The selected new time is invalid."
-        )
+        mocked_reschedule_appointment.side_effect = ValidationError("The selected new time is invalid.")
 
         response = cast(
             Response,
@@ -533,11 +508,7 @@ class TestAppointmentViews:
         """
         Return 409 when the new slot becomes unavailable.
         """
-        mocked_reschedule_appointment.side_effect = (
-            SlotUnavailableError(
-                "The selected appointment slot is no longer available."
-            )
-        )
+        mocked_reschedule_appointment.side_effect = SlotUnavailableError("The selected appointment slot is no longer available.")
 
         response = cast(
             Response,
@@ -555,10 +526,7 @@ class TestAppointmentViews:
         assert response.status_code == status.HTTP_409_CONFLICT
         assert data == {
             "code": "slot_unavailable",
-            "detail": (
-                "The selected appointment slot "
-                "is no longer available."
-            ),
+            "detail": ("The selected appointment slot is no longer available."),
         }
 
     def test_reschedule_rejects_missing_start_time(self) -> None:
@@ -606,9 +574,7 @@ class TestAppointmentViews:
             "full_name": self.patient.full_name,
         }
         assert len(data["appointments"]) == 1
-        assert data["appointments"][0]["id"] == (
-            self.appointment.pk
-        )
+        assert data["appointments"][0]["id"] == (self.appointment.pk)
 
     def test_patient_upcoming_appointments_returns_404(
         self,

@@ -9,7 +9,6 @@ from appointments.models import (
     Patient,
 )
 
-
 DOCTORS = [
     {
         "full_name": "Dr. Maleek Hassan",
@@ -61,18 +60,14 @@ PATIENTS = [
 class Command(BaseCommand):
     help = "Create sample doctors, patients, and working hours."
 
-    @transaction.atomic #This means the entire seed operation is treated as one transaction.If the command fails halfway through:
-    #...Django rolls back the operation instead of leaving partially-created sample data.
+    @transaction.atomic  # This means the entire seed operation is treated as one transaction.If the command fails halfway through:
+    # ...Django rolls back the operation instead of leaving partially-created sample data.
     def handle(self, *args, **options):
         doctors = self.create_doctors()
         self.create_patients()
         self.create_working_hours(doctors)
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                "Sample clinic data created successfully."
-            )
-        )
+        self.stdout.write(self.style.SUCCESS("Sample clinic data created successfully."))
 
     def create_doctors(self):
         doctors = []
@@ -90,9 +85,7 @@ class Command(BaseCommand):
             doctors.append(doctor)
 
             action = "Created" if created else "Updated"
-            self.stdout.write(
-                f"{action} doctor: {doctor.full_name}"
-            )
+            self.stdout.write(f"{action} doctor: {doctor.full_name}")
 
         return doctors
 
@@ -107,9 +100,7 @@ class Command(BaseCommand):
             )
 
             action = "Created" if created else "Updated"
-            self.stdout.write(
-                f"{action} patient: {patient.full_name}"
-            )
+            self.stdout.write(f"{action} patient: {patient.full_name}")
 
     def create_working_hours(self, doctors):
         weekdays = [
@@ -122,21 +113,16 @@ class Command(BaseCommand):
 
         for doctor in doctors:
             for weekday in weekdays:
-                working_hour, created = (
-                    DoctorWorkingHour.objects.update_or_create(
-                        doctor=doctor,
-                        weekday=weekday,
-                        defaults={
-                            "start_time": time(8, 0),
-                            "end_time": time(16, 0),
-                            "is_active": True,
-                        },
-                    )
+                working_hour, created = DoctorWorkingHour.objects.update_or_create(
+                    doctor=doctor,
+                    weekday=weekday,
+                    defaults={
+                        "start_time": time(8, 0),
+                        "end_time": time(16, 0),
+                        "is_active": True,
+                    },
                 )
 
                 action = "Created" if created else "Updated"
 
-                self.stdout.write(
-                    f"{action} working hours: "
-                    f"{working_hour}"
-                )
+                self.stdout.write(f"{action} working hours: {working_hour}")

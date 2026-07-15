@@ -106,16 +106,11 @@ class TestAppointmentServices:
         """
         Convert a database booking conflict into SlotUnavailableError.
         """
-        mocked_create.side_effect = IntegrityError(
-            "Duplicate appointment slot"
-        )
+        mocked_create.side_effect = IntegrityError("Duplicate appointment slot")
 
         with pytest.raises(
             SlotUnavailableError,
-            match=(
-                "The selected appointment slot "
-                "is no longer available."
-            ),
+            match=("The selected appointment slot is no longer available."),
         ):
             book_appointment(
                 doctor=self.doctor,
@@ -146,14 +141,8 @@ class TestAppointmentServices:
 
         cancelled_appointment.refresh_from_db()
 
-        assert (
-            cancelled_appointment.status
-            == Appointment.Status.CANCELLED
-        )
-        assert (
-            cancelled_appointment.cancellation_reason
-            == "Patient changed plans."
-        )
+        assert cancelled_appointment.status == Appointment.Status.CANCELLED
+        assert cancelled_appointment.cancellation_reason == "Patient changed plans."
         assert cancelled_appointment.cancelled_at is not None
 
     def test_cancel_appointment_rejects_already_cancelled(
@@ -200,10 +189,7 @@ class TestAppointmentServices:
 
         rescheduled_appointment.refresh_from_db()
 
-        assert (
-            rescheduled_appointment.start_time
-            == self.new_start_time
-        )
+        assert rescheduled_appointment.start_time == self.new_start_time
 
         mocked_validate.assert_called_once_with(
             doctor=self.doctor,
@@ -226,9 +212,7 @@ class TestAppointmentServices:
 
         with pytest.raises(
             CancelledAppointmentError,
-            match=(
-                "A cancelled appointment cannot be rescheduled."
-            ),
+            match=("A cancelled appointment cannot be rescheduled."),
         ):
             reschedule_appointment(
                 appointment=appointment,
@@ -251,27 +235,17 @@ class TestAppointmentServices:
             status=Appointment.Status.BOOKED,
         )
 
-        with patch(
-            "appointments.services."
-            "Appointment.objects.select_for_update"
-        ) as mocked_select_for_update:
-            mocked_select_for_update.return_value.get.return_value = (
-                appointment
-            )
+        with patch("appointments.services.Appointment.objects.select_for_update") as mocked_select_for_update:
+            mocked_select_for_update.return_value.get.return_value = appointment
 
             with patch.object(
                 appointment,
                 "save",
-                side_effect=IntegrityError(
-                    "Duplicate appointment slot"
-                ),
+                side_effect=IntegrityError("Duplicate appointment slot"),
             ):
                 with pytest.raises(
                     SlotUnavailableError,
-                    match=(
-                        "The selected appointment slot "
-                        "is no longer available."
-                    ),
+                    match=("The selected appointment slot is no longer available."),
                 ):
                     reschedule_appointment(
                         appointment=appointment,

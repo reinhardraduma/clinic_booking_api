@@ -94,20 +94,13 @@ class TestAppointmentCancellationAPI:
 
         assert response.status_code == status.HTTP_200_OK
         assert data["status"] == Appointment.Status.CANCELLED
-        assert data["cancellation_reason"] == (
-            "Patient is unavailable."
-        )
+        assert data["cancellation_reason"] == ("Patient is unavailable.")
         assert data["cancelled_at"] is not None
 
         self.appointment.refresh_from_db()
 
-        assert (
-            self.appointment.status
-            == Appointment.Status.CANCELLED
-        )
-        assert self.appointment.cancellation_reason == (
-            "Patient is unavailable."
-        )
+        assert self.appointment.status == Appointment.Status.CANCELLED
+        assert self.appointment.cancellation_reason == ("Patient is unavailable.")
         assert self.appointment.cancelled_at is not None
 
     def test_requires_cancellation_reason(self) -> None:
@@ -179,13 +172,8 @@ class TestAppointmentCancellationAPI:
         data = get_response_data(response)
 
         assert response.status_code == status.HTTP_409_CONFLICT
-        assert (
-            data["code"]
-            == "appointment_already_cancelled"
-        )
-        assert data["detail"] == (
-            "This appointment has already been cancelled."
-        )
+        assert data["code"] == "appointment_already_cancelled"
+        assert data["detail"] == ("This appointment has already been cancelled.")
 
     def test_returns_404_for_unknown_appointment(self) -> None:
         """
@@ -233,10 +221,7 @@ class TestAppointmentCancellationAPI:
 
         self.appointment.refresh_from_db()
 
-        assert (
-            self.appointment.status
-            == Appointment.Status.CANCELLED
-        )
+        assert self.appointment.status == Appointment.Status.CANCELLED
 
         replacement_patient = Patient.objects.create(
             full_name="Mary Wanjiku",
@@ -260,10 +245,16 @@ class TestAppointmentCancellationAPI:
 
         assert appointments_for_slot.count() == 2
 
-        assert appointments_for_slot.filter(
-            status=Appointment.Status.CANCELLED,
-        ).count() == 1
+        assert (
+            appointments_for_slot.filter(
+                status=Appointment.Status.CANCELLED,
+            ).count()
+            == 1
+        )
 
-        assert appointments_for_slot.filter(
-            status=Appointment.Status.BOOKED,
-        ).count() == 1
+        assert (
+            appointments_for_slot.filter(
+                status=Appointment.Status.BOOKED,
+            ).count()
+            == 1
+        )

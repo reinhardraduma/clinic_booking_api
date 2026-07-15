@@ -105,10 +105,7 @@ class TestDoctorAvailability:
             selected_date=date(2026, 7, 20),
         )
 
-        returned_start_times = {
-            slot["start_time"]
-            for slot in availability
-        }
+        returned_start_times = {slot["start_time"] for slot in availability}
 
         assert booked_time not in returned_start_times
         assert len(availability) == 3

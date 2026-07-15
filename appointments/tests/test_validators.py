@@ -318,10 +318,7 @@ class TestAppointmentValidators:
 
         with pytest.raises(
             ValidationError,
-            match=(
-                "The selected slot begins before "
-                "the doctor's working hours."
-            ),
+            match=("The selected slot begins before the doctor's working hours."),
         ):
             validate_doctor_working_hours(
                 doctor=self.doctor,
@@ -342,10 +339,7 @@ class TestAppointmentValidators:
 
         with pytest.raises(
             ValidationError,
-            match=(
-                "The selected slot ends after "
-                "the doctor's working hours."
-            ),
+            match=("The selected slot ends after the doctor's working hours."),
         ):
             validate_doctor_working_hours(
                 doctor=self.doctor,
@@ -475,10 +469,7 @@ class TestAppointmentValidators:
 
         with pytest.raises(
             ValidationError,
-            match=(
-                "Appointments cannot be booked "
-                "with an inactive doctor."
-            ),
+            match=("Appointments cannot be booked with an inactive doctor."),
         ):
             validate_appointment_slot(
                 doctor=self.doctor,

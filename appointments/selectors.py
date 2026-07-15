@@ -1,6 +1,8 @@
 from datetime import date, datetime, time, timedelta
-from django.utils import timezone
+
 from django.db.models import QuerySet
+from django.utils import timezone
+
 from appointments.models import Appointment, Doctor, DoctorWorkingHour, Patient
 from appointments.validators import (
     MINIMUM_BOOKING_NOTICE,
@@ -121,9 +123,7 @@ def get_doctor_availability(
         selected_date=selected_date,
     )
 
-    earliest_allowed_time = (
-        timezone.now() + MINIMUM_BOOKING_NOTICE
-    )
+    earliest_allowed_time = timezone.now() + MINIMUM_BOOKING_NOTICE
 
     available_slots = []
 

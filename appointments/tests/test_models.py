@@ -156,10 +156,7 @@ class TestDoctorWorkingHourModel:
             end_time=time(17, 0),
         )
 
-        assert str(working_hour) == (
-            "Dr. Amina Hassan - Monday "
-            "08:00:00 to 17:00:00"
-        )
+        assert str(working_hour) == ("Dr. Amina Hassan - Monday 08:00:00 to 17:00:00")
 
     def test_working_hour_is_active_by_default(self) -> None:
         """
@@ -207,10 +204,7 @@ class TestDoctorWorkingHourModel:
         )
 
         assert "end_time" in error
-        assert (
-            error["end_time"][0].message
-            == "End time must be later than start time."
-        )
+        assert error["end_time"][0].message == "End time must be later than start time."
 
     def test_clean_rejects_end_time_before_start_time(self) -> None:
         """
@@ -327,9 +321,7 @@ class TestDoctorWorkingHourModel:
             end_time=time(17, 0),
         )
 
-        working_hours = list(
-            DoctorWorkingHour.objects.all()
-        )
+        working_hours = list(DoctorWorkingHour.objects.all())
 
         assert working_hours == [
             monday,
@@ -403,9 +395,7 @@ class TestAppointmentModel:
             start_time=self.start_time,
         )
 
-        assert appointment.end_time == (
-            self.start_time + timedelta(minutes=30)
-        )
+        assert appointment.end_time == (self.start_time + timedelta(minutes=30))
 
     def test_appointment_string_representation(self) -> None:
         """
@@ -417,10 +407,7 @@ class TestAppointmentModel:
             start_time=self.start_time,
         )
 
-        assert str(appointment) == (
-            f"Jane Doe with Dr. Amina Hassan "
-            f"at {self.start_time}"
-        )
+        assert str(appointment) == (f"Jane Doe with Dr. Amina Hassan at {self.start_time}")
 
     def test_appointments_are_ordered_by_start_time(self) -> None:
         """
