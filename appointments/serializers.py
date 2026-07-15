@@ -74,3 +74,16 @@ class AppointmentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
+
+
+class AppointmentCancellationSerializer(serializers.Serializer):
+    """
+    Validate appointment cancellation input.
+    """
+
+    reason = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        trim_whitespace=True,
+        max_length=500,
+    )

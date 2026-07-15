@@ -6,6 +6,8 @@ from django.db import IntegrityError, transaction
 from appointments.models import Appointment, Doctor, Patient
 from appointments.validators import validate_appointment_slot
 
+from django.utils import timezone
+
 
 class SlotUnavailableError(Exception):
     """
@@ -42,3 +44,48 @@ def book_appointment(
         ) from exc
 
     return appointment
+
+
+class AppointmentAlreadyCancelledError(Exception):
+    """
+    Raised when attempting to cancel an appointment
+    that is already cancelled.
+    """
+
+
+@transaction.atomic
+def cancel_appointment(
+    *,
+    appointment: Appointment,
+    reason: str,
+) -> Appointment:
+    """
+    Cancel an active appointment and release its slot.
+
+    The appointment row is locked so two cancellation
+    requests cannot update it at the same time.
+    """
+
+    locked_appointment = Appointment.objects.select_for_update().get(
+        pk=appointment.pk,
+    )
+
+    if locked_appointment.status == Appointment.Status.CANCELLED:
+        raise AppointmentAlreadyCancelledError(
+            "This appointment has already been cancelled."
+        )
+
+    locked_appointment.status = Appointment.Status.CANCELLED
+    locked_appointment.cancellation_reason = reason
+    locked_appointment.cancelled_at = timezone.now()
+
+    locked_appointment.save(
+        update_fields=[
+            "status",
+            "cancellation_reason",
+            "cancelled_at",
+            "updated_at",
+        ]
+    )
+
+    return locked_appointment

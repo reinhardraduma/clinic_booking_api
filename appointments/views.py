@@ -8,24 +8,26 @@ from rest_framework.response import Response
 
 from appointments.models import Doctor
 from appointments.selectors import get_doctor_availability
-from appointments.serializers import (
-    AvailabilityQuerySerializer,
-    AvailabilitySlotSerializer,
-)
 
 from django.core.exceptions import ValidationError
 
 from appointments.serializers import (
     AppointmentBookingSerializer,
+    AppointmentCancellationSerializer,
     AppointmentSerializer,
     AvailabilityQuerySerializer,
     AvailabilitySlotSerializer,
 )
+
+from appointments.models import Appointment, Doctor
+from appointments.validators import SLOT_DURATION_MINUTES
+
 from appointments.services import (
+    AppointmentAlreadyCancelledError,
     SlotUnavailableError,
     book_appointment,
+    cancel_appointment,
 )
-from appointments.validators import SLOT_DURATION_MINUTES
 
 @api_view(["GET"])
 def health_check(request: Request) -> Response:
@@ -151,4 +153,55 @@ def appointment_create(request: Request) -> Response:
     return Response(
         output_serializer.data,
         status=status.HTTP_201_CREATED,
+    )
+
+@api_view(["PATCH"])
+def appointment_cancel(
+    request: Request,
+    appointment_id: int,
+) -> Response:
+    """
+    Cancel an existing appointment with a reason.
+    """
+
+    appointment = cast(
+        Appointment,
+        get_object_or_404(
+            Appointment,
+            pk=appointment_id,
+        ),
+    )
+
+    input_serializer = AppointmentCancellationSerializer(
+        data=request.data,
+    )
+
+    input_serializer.is_valid(raise_exception=True)
+
+    validated_data = cast(
+        dict[str, Any],
+        input_serializer.validated_data,
+    )
+
+    try:
+        cancelled_appointment = cancel_appointment(
+            appointment=appointment,
+            reason=validated_data["reason"],
+        )
+    except AppointmentAlreadyCancelledError as exc:
+        return Response(
+            {
+                "code": "appointment_already_cancelled",
+                "detail": str(exc),
+            },
+            status=status.HTTP_409_CONFLICT,
+        )
+
+    output_serializer = AppointmentSerializer(
+        cancelled_appointment,
+    )
+
+    return Response(
+        output_serializer.data,
+        status=status.HTTP_200_OK,
     )
