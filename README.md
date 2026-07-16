@@ -9,7 +9,7 @@
 ### 🌐 Base API URL
 
 ```text
-https://clinic-booking-api-dwb4.onrender.com
+https://clinic-booking-api-dwb4.onrender.com/api/
 ```
 
 ### Health Check
@@ -22,7 +22,7 @@ https://clinic-booking-api-dwb4.onrender.com/api/health/
 
 # GitHub Repository
 
-(Add your GitHub repository URL here)
+(https://github.com/reinhardraduma/clinic_booking_api)
 
 ---
 
