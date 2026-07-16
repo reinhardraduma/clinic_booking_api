@@ -12,11 +12,17 @@
 https://clinic-booking-api-dwb4.onrender.com/api/
 ```
 
-### Health Check
+### LIVE DEMO URL
 
-GET
+| Feature | Method | Live URL |
+|----------|--------|----------|
+| Health Check | GET | https://clinic-booking-api-dwb4.onrender.com/api/health/ |
+| Doctor Availability | GET | https://clinic-booking-api-dwb4.onrender.com/api/doctors/5/availability/?date=2026-07-20 |
+| Patient Upcoming Appointments | GET | https://clinic-booking-api-dwb4.onrender.com/api/patients/3/appointments/ |
+| Create Appointment | POST | https://clinic-booking-api-dwb4.onrender.com/api/appointments/ |
+| Cancel Appointment | PATCH | https://clinic-booking-api-dwb4.onrender.com/api/appointments/<appointment_id>/cancel/ |
+| Reschedule Appointment | PATCH | https://clinic-booking-api-dwb4.onrender.com/api/appointments/<appointment_id>/reschedule/ |
 
-https://clinic-booking-api-dwb4.onrender.com/api/health/
 
 ---
 
